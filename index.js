@@ -1,5 +1,6 @@
-var inquirer = require("inquirer");
-var fs = require("fs");
+const inquirer = require("inquirer");
+const fs = require("fs");
+// const questions = require('./questions');
 
 inquirer
   .prompt([
@@ -14,58 +15,64 @@ inquirer
       name: "title"
     },
     {
-        type: "input",
-        message: "Can you decribe your project?",
-        name: "depict"
-      },
-      {
-        type: "input",
-        message: "Can you provide a table of contents?",
-        name: "contants"
-      },
-      {
-        type: "input",
-        message: "What is the installation?",
-        name: "install"
-      },
-      {
-        type: "input",
-        message: "Can you describe the usage?",
-        name: "usage"
-      },
-      {
-        type: "input",
-        message: "Who else contributed to this project?",
-        name: "contrib"
-      },
-      {
-        type: "input",
-        message: "What tests were performed?",
-        name: "tests"
-      },
-         
-
-    // {
-    //     type: "list",
-    //     message: "How do you prefer to communicate?",
-    //     choices: ["eng", "chin", "span"],
-    //     name: "prefer"
-    //   },
-    //   {
-    //     type: "checkbox",
-    //     message: "How do you prefer to communicate?",
-    //     choices: ["eng", "chin", "span"],
-    //     name: "prefer"
-    //   }
+      type: "input",
+      message: "Can you decribe your project?",
+      name: "depict"
+    },
+    {
+      type: "input",
+      message: "Can you provide a table of contents?",
+      name: "contants"
+    },
+    {
+      type: "input",
+      message: "What is the installation?",
+      name: "install"
+    },
+    {
+      type: "input",
+      message: "Can you describe the usage?",
+      name: "usage"
+    },
+    {
+      type: "list",
+      message: "What type of license?",
+      choices: ["MIT", "Apache", "MPL"],
+      name: "type"
+    },
+    {
+      type: "checkbox",
+      message: "What types of technologies were utilized?",
+      choices: ["HTML", "CSS", "JavaScrpt", "Node.js"],
+      name: "prefer"
+    }
   ])
-  .then(function(response) {
-      fs.writeFile("log.txt", JSON.stringify(response), function(err){});
-      console.log(response.username);
-      console.log(response.title);
-      console.log(response.depict);
-      console.log(response.contants);
-      console.log(response.install);
-      console.log(response.usage);
-      console.log(response.contrib);
-      console.log(response.tests);
-  });
+  .then(function (response) {
+      const queryUrl = `https://api.github.com/users/${username}/repos?per_page=100`;
+
+      axios.get(queryUrl).then(function (res) {
+            const repoNames = res.data.map(function (repo) {
+              return repo.name;
+            });
+
+
+            // const newObject = {...response, avatar: response.data.avatar_url}
+
+            console.log(response.username);
+            console.log(response.title);
+            console.log(response.depict);
+            console.log(response.contants);
+            console.log(response.install);
+            console.log(response.usage);
+
+
+              const markdown = createMarkdown(response);
+              // fs.writeFile("profile.md", markdown, function(err){
+              //   if (err) throw err
+              // });
+            });
+            });
+            // const createMarkdown = userInfo => {
+            // return `  ${userInfo.title}
+            // `
+            // }
