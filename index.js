@@ -6,13 +6,16 @@ const axios = require("axios");
 
 
 inquirer
-  .prompt([
-    {
+  .prompt([{
       type: "input",
       message: "What is your GitHub user name?",
       name: "username"
-    }
-    ,
+    },
+    {
+      type: "input",
+      message: "What is your email?",
+      name: "email"
+    },
     {
       type: "input",
       message: "What is the project title?",
@@ -26,7 +29,7 @@ inquirer
     {
       type: "input",
       message: "Can you provide a table of contents?",
-      name: "contants"
+      name: "contents"
     },
     {
       type: "input",
@@ -54,33 +57,68 @@ inquirer
   ])
   .then(function (response) {
     console.log(response);
-      const queryUrl = `https://api.github.com/users/${response.username}/repos?per_page=100`;
+    const queryUrl = `https://api.github.com/search/users?q=${response.username}`;
 
-      axios.get(queryUrl).then(function (res) {
-        // console.log(res);
-        console.log(res.data[0].owner.avatar_url);
-            const repoNames = res.data.map(function (repo) {
-              return repo.name;
-            });
-
-
-            // const newObject = {...response, avatar: response.data.avatar_url}
-
-            console.log(response.username);
-            console.log(response.title);
-            console.log(response.depict);
-            console.log(response.contants);
-            console.log(response.install);
-            console.log(response.usage);
+    axios.get(queryUrl).then(function (res) {
+      // console.log(res);
+      const newObject = {
+        ...response,
+        avatar: res.data.avatar_url
+      }
 
 
-              // const markdown = createMarkdown(response);
-              fs.writeFile("profile.md", "Hello!!!", function(err){
-                if (err) throw err
-              });
-            });
-            });
-            // const createMarkdown = userInfo => {
-            // return `  ${userInfo.title}
-            // `
-            // }
+
+
+      const markdown = createMarkdown(newObject);
+      fs.writeFile("profile.md", markdown, function (err) {
+        if (err) throw err
+      });
+    });
+
+
+
+
+  });
+
+const createMarkdown = userInfo => {
+  return `  
+              # ${userInfo.title} 
+              
+              >written by ${userInfo.username} 
+              >Please contact me with any issues: ${userInfo.email}
+              
+              # Description of project: ${userInfo.depict}
+
+              # Table of Contents
+
+              <img src = "https://avatars3.githubusercontent.com/u/58701376?v=4" width: 50px; height: 50px>
+
+              * Avatar: ${userInfo.avatar}
+
+              * Username: ${userInfo.username}
+
+              * Title: ${userInfo.title}
+
+              * Description: ${userInfo.depict}
+
+              * Table of Contents
+
+              * Installation: ${userInfo.install}
+
+              * Usage: ${userInfo.usage}
+
+              * License: ${userInfo.type}
+
+              * Technologies used:${userInfo.prefer}
+
+              # The Installation type is ${userInfo.install}
+
+              # Usage ${userInfo.usage}
+
+              # License ${userInfo.type}
+
+              # Types of Technology Used:
+                * ${userInfo.prefer}
+
+            `
+}
