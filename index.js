@@ -1,6 +1,9 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
 // const questions = require('./questions');
+const axios = require("axios");
+// const avatarUrl = response.owner.avatar_url;
+
 
 inquirer
   .prompt([
@@ -8,7 +11,8 @@ inquirer
       type: "input",
       message: "What is your GitHub user name?",
       name: "username"
-    },
+    }
+    ,
     {
       type: "input",
       message: "What is the project title?",
@@ -46,11 +50,15 @@ inquirer
       choices: ["HTML", "CSS", "JavaScrpt", "Node.js"],
       name: "prefer"
     }
+
   ])
   .then(function (response) {
-      const queryUrl = `https://api.github.com/users/${username}/repos?per_page=100`;
+    console.log(response);
+      const queryUrl = `https://api.github.com/users/${response.username}/repos?per_page=100`;
 
       axios.get(queryUrl).then(function (res) {
+        // console.log(res);
+        console.log(res.data[0].owner.avatar_url);
             const repoNames = res.data.map(function (repo) {
               return repo.name;
             });
@@ -66,10 +74,10 @@ inquirer
             console.log(response.usage);
 
 
-              const markdown = createMarkdown(response);
-              // fs.writeFile("profile.md", markdown, function(err){
-              //   if (err) throw err
-              // });
+              // const markdown = createMarkdown(response);
+              fs.writeFile("profile.md", "Hello!!!", function(err){
+                if (err) throw err
+              });
             });
             });
             // const createMarkdown = userInfo => {
